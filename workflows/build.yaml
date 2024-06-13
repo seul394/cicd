@@ -1,0 +1,90 @@
+name: Build
+
+on:
+  push:
+    branches: 
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [frontend, backend]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      # frontend
+      - name: Set up Node.js
+        if: matrix.project == 'frontend'
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Cache node modules
+        if: matrix.project == 'frontend'
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: node_modules
+          key: npm-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: npm-modules-
+
+      - name: Install dependencies
+        if: matrix.project == 'frontend' && steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      # backend
+      - name: Set up JDK
+        if: inputs.project == 'backend'
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache gradle packages
+        if: inputs.project == 'backend'
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-packages-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-packages-
+
+      # frontend & backend
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Get image tag
+        id: image
+        run: |
+          VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+          echo VERSION=$VERSION
+          echo "::set-output name=version::$VERSION"
+
+      - name: Build and push image to Amazon ECR
+        id: image-info
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.image.outputs.version }}
+        run: |
+          echo "::set-output name=ecr_repository::$ECR_REPOSITORY"
+          echo "::set-output name=image_tag::$IMAGE_TAG"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
