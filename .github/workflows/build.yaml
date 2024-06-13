@@ -82,15 +82,19 @@ jobs:
         id: image
         run: |
           VERSION=$(echo ${{ github.sha }} | cut -c1-8)
-          echo VERSION=$VERSION
-          echo "::set-output name=version::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Set environment variables
+        run: |
+          echo "ECR_REPOSITORY=${{ inputs.ecr_repository }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ steps.image.outputs.version }}" >> $GITHUB_ENV
 
       - name: Build and push image to Amazon ECR
         id: image-info
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ inputs.ecr_repository }}
-          IMAGE_TAG: ${{ steps.image.outputs.version }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           echo "::set-output name=ecr_repository::$ECR_REPOSITORY"
           echo "::set-output name=image_tag::$IMAGE_TAG"
