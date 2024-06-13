@@ -32,7 +32,7 @@ jobs:
           restore-keys: npm-modules-
 
       - name: Install dependencies
-        if: ${{ inputs.project == 'frontend' }} && steps.cache.outputs.cache-hit != 'true'
+        if: ${{ inputs.project == 'frontend' && steps.cache.outputs.cache-hit != 'true'}}
         run: npm install
 
       # backend
