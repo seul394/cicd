@@ -53,8 +53,12 @@ jobs:
           java-version: '17'
 
       - name: move directory
-        if: ${{ inputs.project == 'backend' }}
         run: cd complete
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
 
       - name: Cache gradle packages
         if: ${{ inputs.project == 'backend' }}
@@ -65,10 +69,6 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-packages-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-packages-
-
-      - name: Build with Maven
-        if: ${{ inputs.project == 'backend' }}
-        run: mvn clean package
 
       # frontend & backend
       - name: Configure AWS credentials
