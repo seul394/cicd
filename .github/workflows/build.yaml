@@ -55,12 +55,6 @@ jobs:
       - name: move directory
         run: cd complete
 
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build
-          gradle-version: 7.3
-
       - name: Cache gradle packages
         if: ${{ inputs.project == 'backend' }}
         uses: actions/cache@v2
@@ -70,6 +64,12 @@ jobs:
             .gradle/wrapper
           key: gradle-packages-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-packages-
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: build
+          gradle-version: 7.3
 
       # frontend & backend
       - name: Configure AWS credentials
