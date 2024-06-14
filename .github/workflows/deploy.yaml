@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      project:
+        required: true
+        type: string
+      ecr_registry:
+        required: true
+        type: string
+      ecr_repository:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
+
+      - name: Checkout source code
+        uses: actions/checkout@v2
+        with:
+          path: kustomize/backend
+
+      - name: Update Kubernetes resources
+        run: |
+          echo ${{ inputs.ecr_registry }}
+          echo ${{ inputs.ecr_repository }}
+          echo ${{ inputs.image_tag }}
+          cd eks-manifest/overlays/prod/
+          kustomize edit set image ${{ inputs.ecr_registry}}/${{ inputs.ecr_repository }}=${{ inputs.ecr_registry}}/\${{ inputs.ecr_repository }}:\${{ inputs.image_tag }}
+          cat kustomization.yaml
+
+      - name: Commit files
+        run: |
+          cd eks-manifest
+          git config --global user.email "iseul2192@gmail.com"
+          git config --global user.name "seul394"
+          git commit -am "Update image tag"
+          git push -u origin main
