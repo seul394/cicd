@@ -33,13 +33,13 @@ jobs:
           echo ${{ inputs.ecr_registry }}
           echo ${{ inputs.ecr_repository }}
           echo ${{ inputs.image_tag }}
-          cd eks-manifest/overlays/prod/
+          cd kustomize/backend/overlays/prod/
           kustomize edit set image ${{ inputs.ecr_registry}}/${{ inputs.ecr_repository }}=${{ inputs.ecr_registry}}/\${{ inputs.ecr_repository }}:\${{ inputs.image_tag }}
           cat kustomization.yaml
 
       - name: Commit files
         run: |
-          cd eks-manifest
+          cd kustomize/backend
           git config --global user.email "iseul2192@gmail.com"
           git config --global user.name "seul394"
           git commit -am "Update image tag"
