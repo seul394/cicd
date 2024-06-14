@@ -25,7 +25,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      ecr_registry: ${{ steps.image-info.outputs.registry }}
+      ecr_registry: ${{ steps.image-info.outputs.ecr_registry }}
       image_tag: ${{ steps.image-info.outputs.image_tag }}
 
     steps:

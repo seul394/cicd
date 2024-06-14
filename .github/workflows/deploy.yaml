@@ -25,21 +25,19 @@ jobs:
 
       - name: Checkout source code
         uses: actions/checkout@v2
-        with:
-          path: kustomize/backend
 
       - name: Update Kubernetes resources
         run: |
           echo ${{ inputs.ecr_registry }}
           echo ${{ inputs.ecr_repository }}
           echo ${{ inputs.image_tag }}
-          cd overlays/prod/
+          cd kustomize/backend/overlays/prod/
           kustomize edit set image ${{ inputs.ecr_registry}}/${{ inputs.ecr_repository }}=${{ inputs.ecr_registry}}/\${{ inputs.ecr_repository }}:\${{ inputs.image_tag }}
           cat kustomization.yaml
 
       - name: Commit files
         run: |
-          cd /
+          cd kustomize/backend/
           git config --global user.email "iseul2192@gmail.com"
           git config --global user.name "seul394"
           git commit -am "Update image tag"
