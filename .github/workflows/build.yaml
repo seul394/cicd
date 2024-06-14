@@ -52,25 +52,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: move directory
-        run: cd complete
-
-      - name: Cache gradle packages
-        if: ${{ inputs.project == 'backend' }}
-        uses: actions/cache@v2
-        with:
-          path: |
-            .gradle/caches
-            .gradle/wrapper
-          key: gradle-packages-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: gradle-packages-
-
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build
-          gradle-version: 7.3
-
       # frontend & backend
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -103,5 +84,5 @@ jobs:
         run: |
           echo "::set-output name=ecr_repository::${{ env.ECR_REPOSITORY }}"
           echo "::set-output name=image_tag::$IMAGE_TAG"
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./complete
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./blog
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
