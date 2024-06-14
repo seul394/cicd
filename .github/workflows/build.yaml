@@ -76,7 +76,7 @@ jobs:
           echo "::set-output name=version::$VERSION"
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x blog/gradlew
 
       - name: Build and push image to Amazon ECR
         id: image-info
