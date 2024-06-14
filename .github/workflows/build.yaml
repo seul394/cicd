@@ -62,6 +62,10 @@ jobs:
           key: gradle-packages-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-packages-
 
+      - name: Build with Maven
+        if: ${{ inputs.project == 'backend' }}
+        run: mvn clean package
+
       # frontend & backend
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
