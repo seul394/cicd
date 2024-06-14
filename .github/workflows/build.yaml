@@ -66,8 +66,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
+            .gradle/caches
+            .gradle/wrapper
           key: gradle-packages-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-packages-
 
