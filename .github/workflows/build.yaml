@@ -25,8 +25,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      ecr_registry: ${{ steps.image-info.outputs.ecr_registry }}
-      image_tag: ${{ steps.image-info.outputs.image_tag }}
+      ecr_registry: ${{ steps.set-outputs.outputs.ecr_registry }}
+      image_tag: ${{ steps.set-outputs.outputs.image_tag }}
 
     steps:
       - name: Checkout source code
@@ -93,7 +93,13 @@ jobs:
           ECR_REPOSITORY: ${{ inputs.ecr_repository }}
           IMAGE_TAG: ${{ steps.image.outputs.version }}
         run: |
-          echo "::set-output name=ecr_registry::$ECR_REGISTRY"
-          echo "::set-output name=image_tag::$IMAGE_TAG"
+          echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}"
+          echo "IMAGE_TAG=${{ steps.image.outputs.version }}"
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./blog
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          echo "::set-output name=ecr_registry::${{ steps.login-ecr.outputs.registry }}"
+          echo "::set-output name=image_tag::${{ steps.image.outputs.version }}"
