@@ -36,12 +36,31 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      # - name: Get secret from AWS Secrets Manager
+      #   id: get-secret
+      #   run: |
+      #     SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.SECRET_ID }} --query SecretString --output text)
+      #     echo $SECRET_VALUE > secret.json
+
       - name: Get secret from AWS Secrets Manager
-        id: get-secret
-        run: |
-          SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.SECRET_ID }} --query SecretString --output text)
-          echo $SECRET_VALUE > secret.json
-          cat secret.json
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ACTION_TOKEN, blog-cicd-secret/ACTION_TOKEN
+            GIT_EMAIL, blog-cicd-secret/GIT_EMAIL
+            GIT_USER, blog-cicd-secret/GIT_USER
+      
+      - name: print secret
+        run: echo "$GIT_USER"
+
 
       - name: Checkout kustomize repository
         uses: actions/checkout@v2
@@ -50,14 +69,6 @@ jobs:
           ref: main
           token: ${{ secrets.ACTION_TOKEN }}
           path: kustomize
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
 
       - name: Update Kubernetes resources
         env:
