@@ -49,6 +49,7 @@ jobs:
           ECR_REPOSITORY: ${{ inputs.ecr_repository }}
           IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
+          ls
           cd kustomize/backend/overlays/prod/
           kustomize edit set image $ECR_REGISTRY/$ECR_REPOSITORY=$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG
           cat kustomization.yaml
