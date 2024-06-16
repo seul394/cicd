@@ -45,13 +45,14 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: blog-cicd-secret
+          parse-json-secrets: true
 
       - name: Checkout kustomize repository
         uses: actions/checkout@v2
         with:
           repository: seul394/cicd
           ref: main
-          token: ${{ steps.get-secrets.outputs.ACTION_TOKEN }}
+          token: $ACTION_TOKEN
           path: kustomize
 
       - name: Update Kubernetes resources
@@ -68,7 +69,7 @@ jobs:
       - name: Commit files
         run: |
           cd kustomize
-          git config --global user.email ${{ steps.get-secrets.outputs.GIT_EMAIL }}
-          git config --global user.name ${{ steps.get-secrets.outputs.GIT_USER }}
+          git config --global user.email $GIT_EMAIL
+          git config --global user.name $GIT_USER
           git commit -am "Update image tag"
           git push -f -u origin main
