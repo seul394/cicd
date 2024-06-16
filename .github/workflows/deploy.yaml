@@ -6,9 +6,6 @@ on:
       project:
         required: true
         type: string
-      ecr_registry:
-        required: true
-        type: string
       ecr_repository:
         required: true
         type: string
