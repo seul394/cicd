@@ -26,13 +26,29 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
       - name: Update Kubernetes resources
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+          IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
-          echo ${{ inputs.ecr_registry }}
-          echo ${{ inputs.ecr_repository }}
-          echo ${{ inputs.image_tag }}
           cd kustomize/backend/overlays/prod/
-          kustomize edit set image ${{ inputs.ecr_registry}}/${{ inputs.ecr_repository }}=${{ inputs.ecr_registry}}/\${{ inputs.ecr_repository }}:\${{ inputs.image_tag }}
+          kustomize edit set image $ECR_REGISTRY/$ECR_REPOSITORY=$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG
           cat kustomization.yaml
 
       - name: Commit files

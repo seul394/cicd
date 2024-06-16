@@ -15,8 +15,6 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
     outputs:
-      ecr_registry:
-        value: ${{ jobs.build.outputs.ecr_registry }}
       image_tag:
         value: ${{ jobs.build.outputs.image_tag }}
 
@@ -25,8 +23,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      ecr_registry: ${{ steps.set-outputs.outputs.ecr_registry }}
-      image_tag: ${{ steps.set-outputs.outputs.image_tag }}
+      image_tag: ${{ steps.image-info.outputs.image_tag }}
 
     steps:
       - name: Checkout source code
@@ -81,7 +78,7 @@ jobs:
         run: |
           VERSION=$(echo ${{ github.sha }} | cut -c1-8)
           echo VERSION=$VERSION
-          echo "::set-output name=version::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Grant execute permission for gradlew
         run: chmod +x blog/gradlew
@@ -93,19 +90,6 @@ jobs:
           ECR_REPOSITORY: ${{ inputs.ecr_repository }}
           IMAGE_TAG: ${{ steps.image.outputs.version }}
         run: |
-          echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}"
-          echo "IMAGE_TAG=${{ steps.image.outputs.version }}"
+          echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./blog
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Set outputs
-        id: set-outputs
-        run: |
-          echo "::set-output name=ecr_registry::${{ steps.login-ecr.outputs.registry }}"
-          echo "::set-output name=image_tag::${{ steps.image.outputs.version }}"
-
-      - name: Verify outputs
-        run: |
-          echo "Set outputs:"
-          echo "ECR_REGISTRY=${{ steps.set-outputs.outputs.ecr_registry }}"
-          echo "IMAGE_TAG=${{ steps.set-outputs.outputs.image_tag }}"
