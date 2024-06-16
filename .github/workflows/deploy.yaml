@@ -45,7 +45,6 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: blog-cicd-secret
-          parse-json-secrets: true
 
       - name: Checkout kustomize repository
         uses: actions/checkout@v2
