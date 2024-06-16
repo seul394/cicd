@@ -54,9 +54,9 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            ACTION_TOKEN, blog-cicd-secret/ACTION_TOKEN
-            GIT_EMAIL, blog-cicd-secret/GIT_EMAIL
-            GIT_USER, blog-cicd-secret/GIT_USER
+            ACTION_TOKEN, blog-cicd-secret
+            GIT_EMAIL, blog-cicd-secret
+            GIT_USER, blog-cicd-secret
       
       - name: print secret
         run: echo "$GIT_USER"
