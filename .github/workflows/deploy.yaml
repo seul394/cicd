@@ -55,7 +55,7 @@ jobs:
         run: |
           ls
           cd kustomize/kustomize/backend/overlays/prod/
-          kustomize edit set image $ECR_REGISTRY/$ECR_REPOSITORY=$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG
+          kustomize edit set image $ECR_REGISTRY/$ECR_REPOSITORY=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           cat kustomization.yaml
 
       - name: Commit files
