@@ -4,6 +4,9 @@ kind: Kustomization
 images:
 - name: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-maind:latest
   newTag: prod
+- name: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main
+  newName: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main
+  newTag: cb487e13
 
 resources:
 - ../../base
