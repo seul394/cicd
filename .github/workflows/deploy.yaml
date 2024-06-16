@@ -19,6 +19,8 @@ on:
         required: true
       ACTION_TOKEN:
         required: true
+      SECRET_ID:
+        required: true
 
 jobs:
   deploy:
