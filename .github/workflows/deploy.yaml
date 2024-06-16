@@ -60,7 +60,6 @@ jobs:
 
       - name: Commit files
         run: |
-          cd kustomize/backend/
           git config --global user.email "iseul2192@gmail.com"
           git config --global user.name "seul394"
           git commit -am "Update image tag"
