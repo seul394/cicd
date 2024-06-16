@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: blog-backend
-          image: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend:latest
+          image: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
