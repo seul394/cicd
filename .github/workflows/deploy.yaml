@@ -47,12 +47,20 @@ jobs:
           secret-ids: blog-cicd-secret
           parse-json-secrets: true
 
+      - name: Set environment variables
+        run: |
+          echo "ACTION_TOKEN=${{ steps.get-secrets.outputs.ACTION_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Debug secret
+        run: |
+          echo "ACTION_TOKEN: $ACTION_TOKEN"
+
       - name: Checkout kustomize repository
         uses: actions/checkout@v2
         with:
           repository: seul394/cicd
           ref: main
-          token: ${{ secrets.ACTION_TOKEN }}
+          token: ${{ env.ACTION_TOKEN }}
           path: kustomize
 
       - name: Update Kubernetes resources
