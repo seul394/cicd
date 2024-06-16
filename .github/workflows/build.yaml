@@ -93,7 +93,7 @@ jobs:
           ECR_REPOSITORY: ${{ inputs.ecr_repository }}
           IMAGE_TAG: ${{ steps.image.outputs.version }}
         run: |
-          echo $ECR_REGISTRY
+          echo "ecr registry is $ECR_REGISTRY"
           echo "ecr_registry=$ECR_REGISTRY" >> $GITHUB_OUTPUT
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./blog
