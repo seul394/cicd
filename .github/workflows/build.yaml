@@ -103,3 +103,9 @@ jobs:
         run: |
           echo "::set-output name=ecr_registry::${{ steps.login-ecr.outputs.registry }}"
           echo "::set-output name=image_tag::${{ steps.image.outputs.version }}"
+
+      - name: Verify outputs
+        run: |
+          echo "Set outputs:"
+          echo "ECR_REGISTRY=${{ steps.set-outputs.outputs.ecr_registry }}"
+          echo "IMAGE_TAG=${{ steps.set-outputs.outputs.image_tag }}"
