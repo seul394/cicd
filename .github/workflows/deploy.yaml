@@ -17,10 +17,6 @@ on:
         required: true
       AWS_SECRET_ACCESS_KEY:
         required: true
-      ACTION_TOKEN:
-        required: true
-      SECRET_ID:
-        required: true
 
 jobs:
   deploy:
@@ -44,26 +40,19 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
-      # - name: Get secret from AWS Secrets Manager
-      #   id: get-secret
-      #   run: |
-      #     SECRET_VALUE=$(aws secretsmanager get-secret-value --secret-id ${{ secrets.SECRET_ID }} --query SecretString --output text)
-      #     echo $SECRET_VALUE > secret.json
-
       - name: Get secret from AWS Secrets Manager
+        id: get-secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-          secret-ids: |
-            ACTION_TOKEN, blog-cicd-secret
-            GIT_EMAIL, blog-cicd-secret
-            GIT_USER, blog-cicd-secret
+          secret-ids: blog-cicd-secret
+          parse-json-secrets: true
 
       - name: Checkout kustomize repository
         uses: actions/checkout@v2
         with:
           repository: seul394/cicd
           ref: main
-          token: $ACTION_TOKEN
+          token: ${{ steps.get-secrets.outputs.ACTION_TOKEN }}
           path: kustomize
 
       - name: Update Kubernetes resources
@@ -80,7 +69,7 @@ jobs:
       - name: Commit files
         run: |
           cd kustomize
-          git config --global user.email $GIT_EMAIL
-          git config --global user.name $GIT_USER
+          git config --global user.email ${{ steps.get-secrets.outputs.GIT_EMAIL }}
+          git config --global user.name ${{ steps.get-secrets.outputs.GIT_USER }}
           git commit -am "Update image tag"
           git push -f -u origin main
