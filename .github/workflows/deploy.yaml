@@ -46,6 +46,7 @@ jobs:
         with:
           secret-ids: |
             ,blog-cicd-secret
+          parse-json-secrets: true
 
       # - name: Set environment variables
       #   run: |
