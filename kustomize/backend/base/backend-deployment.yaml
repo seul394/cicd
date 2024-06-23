@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blog-backend
-  namespace: blog-app
 spec:
   replicas: 3
   selector:
@@ -15,7 +14,7 @@ spec:
     spec:
       containers:
         - name: blog-backend
-          image: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main:latest
+          image: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
