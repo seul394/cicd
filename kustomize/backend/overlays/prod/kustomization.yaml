@@ -2,7 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 images:
-  - name: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main
+- name: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main
+  newName: 341931614219.dkr.ecr.ap-northeast-2.amazonaws.com/blog-backend-main
+  newTag: 8cb52cec
 
 resources:
-  - ../../base
+- ../../base
