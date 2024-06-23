@@ -44,12 +44,11 @@ jobs:
         id: get-secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-          secret-ids: blog-cicd-secret
-          parse-json-secrets: true
+          secret-ids: ,blog-cicd-secret
 
-      - name: Set environment variables
-        run: |
-          echo "ACTION_TOKEN=${{ steps.get-secrets.outputs.ACTION_TOKEN }}" >> $GITHUB_ENV
+      # - name: Set environment variables
+      #   run: |
+      #     echo "ACTION_TOKEN=${{ steps.get-secrets.outputs.ACTION_TOKEN }}" >> $GITHUB_ENV
 
       - name: Debug secret
         run: |
