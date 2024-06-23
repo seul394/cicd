@@ -48,10 +48,6 @@ jobs:
             ,blog-cicd-secret
           parse-json-secrets: true
 
-      # - name: Set environment variables
-      #   run: |
-      #     echo "ACTION_TOKEN=${{ steps.get-secrets.outputs.ACTION_TOKEN }}" >> $GITHUB_ENV
-
       - name: Debug secret
         run: |
           echo "ACTION_TOKEN: $ACTION_TOKEN"
@@ -78,7 +74,7 @@ jobs:
       - name: Commit files
         run: |
           cd kustomize
-          git config --global user.email ${{ secrets.GIT_EMAIL }}
-          git config --global user.name ${{ secrets.GIT_USER }}
+          git config --global user.email ${{ env.GIT_EMAIL }}
+          git config --global user.name ${{ env.GIT_USER }}
           git commit -am "Update image tag"
           git push -f -u origin main
