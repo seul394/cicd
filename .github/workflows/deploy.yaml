@@ -44,7 +44,8 @@ jobs:
         id: get-secrets
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
-          secret-ids: ,blog-cicd-secret
+          secret-ids: |
+            ,blog-cicd-secret
 
       # - name: Set environment variables
       #   run: |
